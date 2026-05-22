@@ -360,7 +360,7 @@ const{user}=useAuth()
                 <input
                   type="text"
                   className="input input-bordered w-full"
-                  value="John Doe"
+                  placeholder='Sender Name'
                   readOnly
                   {...register('senderName', {
                     required: true,

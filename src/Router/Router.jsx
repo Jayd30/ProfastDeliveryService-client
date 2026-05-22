@@ -12,6 +12,9 @@ import Bookparcel from '../Pages/BookParcel/Bookparcel';
 import DashBoardLayouts from '../layouts/DashBoardLayouts';
 import MyParcel from '../Pages/DashBoard/Myparcel/MyParcel';
 import Profile from '../Pages/DashBoard/Profile';
+import ContactUs from '../Pages/Shared/ContactUs/Contactus';
+import Services from '../Pages/Shared/Service/Service';
+import Service from '../Pages/Shared/Service/Service';
 
 
 
@@ -29,8 +32,16 @@ export const router = createBrowserRouter([
             Component:AboutUs
         },
         {
+path:'/contact',
+Component:ContactUs
+        },
+        {
             path:'coverage',
             Component:Coverage
+        },
+        {
+path:'/services',
+Component:Service
         },
         {
             path:'bookParcel',
