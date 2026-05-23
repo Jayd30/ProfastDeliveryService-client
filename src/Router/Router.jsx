@@ -15,6 +15,7 @@ import Profile from '../Pages/DashBoard/Profile';
 import ContactUs from '../Pages/Shared/ContactUs/Contactus';
 import Services from '../Pages/Shared/Service/Service';
 import Service from '../Pages/Shared/Service/Service';
+import Yourresponse from '../Pages/Yourresponse/Yourresponse';
 
 
 
@@ -75,8 +76,15 @@ Component:MyParcel
         {
             path:'profile',
             Component:Profile
-        }
-    ]
+        },
+        {
+path:'yourresponse',
+Component:Yourresponse
   }
+        
+    ]
+  },
+
+  
 
 ]);

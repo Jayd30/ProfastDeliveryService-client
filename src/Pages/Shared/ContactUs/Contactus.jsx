@@ -10,48 +10,42 @@ import {
 
 import secureAxios from "../../../hooks/secureAxios";
 import Swal from "sweetalert2";
+import useAuth from "../../../hooks/useAuth";
 
 const ContactUs = () => {
-
+const{user}=useAuth()
   const { register, handleSubmit, reset } = useForm();
 
   const axiosSecu = secureAxios();
 
   // FORM SUBMIT
   const onSubmit = async (data) => {
+const newData={
+  ...data
+}
+  console.log(newData);
 
-  console.log(data);
+  // data store in api
+  axiosSecu.post('/contacts',newData)
+ .then(res=>{
+  console.log(res.data)
+  if(res.data.insertedId){
+Swal.fire({
 
-  try {
+          title: 'Your Message Send Successfully',
 
-    const res = await axiosSecu.post('/contact', data);
+        
 
-    console.log(res.data);
+          icon: 'success',
 
-    if (res.data.insertedId) {
+          timer: 2500,
 
-      Swal.fire({
-        title: 'Message Sent!',
-        text: 'Thank you for contacting us.',
-        icon: 'success',
-        confirmButtonText: 'OK',
-      });
+          showConfirmButton: false,
 
-    }
-
-  } catch (error) {
-
-    console.log(error);
-
-    Swal.fire({
-      title: 'Error!',
-      text: 'Something went wrong',
-      icon: 'error',
-    });
-
+        })
+  }reset()
+ })
   }
-
-};
   return (
 
     <section className="min-h-screen bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 py-16 px-4">
@@ -216,6 +210,7 @@ const ContactUs = () => {
 
                 <input
                   type="email"
+                  value={user?.email || ""}
                   placeholder="Enter your email"
                   {...register('email', {
                     required: true

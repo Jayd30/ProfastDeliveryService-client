@@ -105,6 +105,14 @@ const DashboardLayout = () => {
 
             Profile
           </NavLink>
+          <NavLink
+            to="/dashboard/yourresponse"
+            className={navItemClass}
+          >
+            <FaShippingFast className="text-xl group-hover:rotate-6 transition-all duration-300" />
+
+            My Response
+          </NavLink>
 
         </div>
 
