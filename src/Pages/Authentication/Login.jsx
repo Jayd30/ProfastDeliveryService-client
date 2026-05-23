@@ -10,23 +10,31 @@ import { IoEyeOffOutline } from "react-icons/io5";
 
 const Login = () => {
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues
+  } = useForm();
 
   const [show, setShow] = useState(false);
 
   const navigate = useNavigate();
 
-  const { signin } = useAuth();
+  const { signin, resetPassword } = useAuth();
 
-  // TOGGLE FUNCTION
+  // TOGGLE PASSWORD
   const handleEye = () => {
     setShow(!show);
   };
 
-  // LOGIN
+  // =========================
+  // LOGIN FUNCTION
+  // =========================
   const onSubmit = data => {
 
     signin(data.email, data.password)
+
       .then(result => {
 
         console.log(result.user);
@@ -41,19 +49,78 @@ const Login = () => {
         navigate('/');
 
       })
+
       .catch(error => {
+
         console.log(error);
+        if(error.code ==='auth/invalid-credential'){
+          Swal.fire({
+                    title: 'No User Found',
+                    text: 'Please Register your Account First.',
+                    icon: 'warning',
+                    confirmButtonColor: '#d33'
+                  });
+        }
+
+        
+
+      });
+
+  };
+
+  // =========================
+  // FORGOT PASSWORD FUNCTION
+  // =========================
+  const handleForget = () => {
+
+    // ✅ CHANGED
+    const resetEmail = getValues('email');
+
+    // ✅ CHANGED
+    if (!resetEmail) {
+
+      Swal.fire({
+        icon: 'warning',
+        title: 'Please enter your email first'
+      });
+
+      return;
+    }
+
+    // ✅ CHANGED
+    resetPassword(resetEmail)
+
+      .then(() => {
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Password reset email sent',
+          text: 'Check your email inbox'
+        });
+
+      })
+
+      .catch(error => {
+
+        console.log(error);
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text: error.message
+        });
+
       });
 
   };
 
   return (
 
-    <div className="hero bg-base-200 w-full">
+    <div className="hero bg-base-200 min-h-screen">
 
       <div className="hero-content flex-col lg:flex-row-reverse">
 
-        <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+        <div className="card bg-base-100 w-full max-w-sm shadow-2xl">
 
           <div className="card-body">
 
@@ -142,13 +209,20 @@ const Login = () => {
                   </p>
                 }
 
-                <div>
-                  <a className="link link-hover">
+                {/* ✅ CHANGED */}
+                <div className="mt-2">
+
+                  <button
+                    type="button"
+                    onClick={handleForget}
+                    className="link link-hover text-blue-500"
+                  >
                     Forgot password?
-                  </a>
+                  </button>
+
                 </div>
 
-                {/* BUTTON */}
+                {/* LOGIN BUTTON */}
                 <button className="btn btn-neutral mt-4">
                   Login
                 </button>

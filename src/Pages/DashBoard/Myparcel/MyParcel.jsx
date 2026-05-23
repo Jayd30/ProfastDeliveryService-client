@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import Swal from 'sweetalert2';
 import useAuth from '../../../hooks/useAuth';
 import secureAxios from '../../../hooks/secureAxios';
-import Swal from 'sweetalert2';
 
 const MyParcel = () => {
 
@@ -10,8 +10,13 @@ const MyParcel = () => {
 
   const axiosSecure = secureAxios();
 
+  const [selectedParcel, setSelectedParcel] = useState(null);
+
   // GET PARCELS
-  const { data: parcels = [], refetch } = useQuery({
+  const {
+    data: parcels = [],
+    refetch
+  } = useQuery({
 
     queryKey: ['my-parcels', user?.email],
 
@@ -19,15 +24,15 @@ const MyParcel = () => {
 
     queryFn: async () => {
 
-      const res = await axiosSecure.get( `/parcels?email=${user?.email}`);
+      const res = await axiosSecure.get(
+        `/parcels?email=${user?.email}`
+      );
 
       return res.data;
 
     }
 
   });
-
-
 
   // DELETE PARCEL
   const handleDelete = (id) => {
@@ -64,6 +69,46 @@ const MyParcel = () => {
 
   };
 
+  // UPDATE PARCEL
+  const handleUpdate = async (e) => {
+
+    e.preventDefault();
+
+    const form = e.target;
+
+    const updatedParcel = {
+
+      type: form.type.value,
+      senderName: form.senderName.value,
+      senderContact: form.senderContact.value,
+      receiverName: form.receiverName.value,
+      receiverContact: form.receiverContact.value,
+      address: form.address.value,
+      cost: form.cost.value,
+
+    };
+
+    const res = await axiosSecure.patch(
+      `/parcels/${selectedParcel._id}`,
+      updatedParcel
+    );
+
+    if (res.data.modifiedCount > 0) {
+
+      Swal.fire({
+        title: 'Updated!',
+        text: 'Parcel updated successfully',
+        icon: 'success',
+      });
+
+      setSelectedParcel(null);
+
+      refetch();
+
+    }
+
+  };
+
   return (
 
     <div className="p-4 md:p-8">
@@ -86,7 +131,6 @@ const MyParcel = () => {
 
         <table className="table">
 
-          {/* TABLE HEAD */}
           <thead className="bg-primary text-white">
 
             <tr>
@@ -95,11 +139,11 @@ const MyParcel = () => {
 
               <th>Type</th>
 
-              <th>Created At</th>
+              <th>Sender</th>
+
+              <th>Receiver</th>
 
               <th>Cost</th>
-
-              <th>Payment</th>
 
               <th>Tracking ID</th>
 
@@ -109,7 +153,6 @@ const MyParcel = () => {
 
           </thead>
 
-          {/* TABLE BODY */}
           <tbody>
 
             {
@@ -120,23 +163,19 @@ const MyParcel = () => {
                   className="hover"
                 >
 
-                  {/* SERIAL */}
-                  <td>
-                    {index + 1}
-                  </td>
+                  <td>{index + 1}</td>
 
-                  {/* TYPE */}
                   <td>
 
                     {
                       parcel.type === 'document'
                         ? (
-                          <span className="badge badge-info badge-outline">
+                          <span className="badge badge-info">
                             Document
                           </span>
                         )
                         : (
-                          <span className="badge badge-secondary badge-outline">
+                          <span className="badge badge-secondary">
                             Non Document
                           </span>
                         )
@@ -144,72 +183,29 @@ const MyParcel = () => {
 
                   </td>
 
-                  {/* CREATED DATE */}
-                  <td>
+                  <td>{parcel.senderName}</td>
 
-                    {
-                      new Date(
-                        parcel.creation_date
-                      ).toLocaleDateString()
-                    }
+                  <td>{parcel.receiverName}</td>
 
-                  </td>
-
-                  {/* COST */}
                   <td className="font-bold text-green-600">
-
                     ₹ {parcel.cost}
-
                   </td>
 
-                  {/* PAYMENT STATUS */}
                   <td>
-
-                    {
-                      parcel.payment_status === 'paid'
-                        ? (
-                          <span className="badge badge-success">
-                            Paid
-                          </span>
-                        )
-                        : (
-                          <span className="badge badge-error">
-                            Unpaid
-                          </span>
-                        )
-                    }
-
+                    {parcel.trackingID}
                   </td>
 
-                  {/* TRACKING */}
-                  <td>
-
-                    <span className="font-semibold text-primary">
-                      {parcel.trackingID}
-                    </span>
-
-                  </td>
-
-                  {/* ACTION BUTTONS */}
                   <td>
 
                     <div className="flex flex-wrap gap-2">
 
-                      {/* VIEW */}
-                      <button className="btn btn-sm btn-info text-white">
-                        View
+                      {/* UPDATE */}
+                      <button
+                        onClick={() => setSelectedParcel(parcel)}
+                        className="btn btn-sm btn-warning text-white"
+                      >
+                        Update
                       </button>
-
-                      {/* PAY */}
-                      {
-                        parcel.payment_status !== 'paid' && (
-
-                          <button className="btn btn-sm btn-success text-white">
-                            Pay
-                          </button>
-
-                        )
-                      }
 
                       {/* DELETE */}
                       <button
@@ -234,8 +230,163 @@ const MyParcel = () => {
 
       </div>
 
+      {/* UPDATE MODAL */}
+      {
+        selectedParcel && (
+
+          <dialog
+            open
+            className="modal modal-open"
+          >
+
+            <div className="modal-box max-w-3xl">
+
+              <h3 className="font-bold text-2xl mb-6">
+                Update Parcel
+              </h3>
+
+              <form
+                onSubmit={handleUpdate}
+                className="grid grid-cols-1 md:grid-cols-2 gap-4"
+              >
+
+                {/* DOCUMENT TYPE */}
+                <div className="md:col-span-2">
+
+                  <label className="font-semibold mb-3 block">
+                    Parcel Type
+                  </label>
+
+                  <div className="flex items-center gap-6">
+
+                    {/* DOCUMENT */}
+                    <label className="flex items-center gap-2">
+
+                      <input
+                        type="radio"
+                        name="type"
+                        value="document"
+                        defaultChecked={
+                          selectedParcel.type === 'document'
+                        }
+                        className="radio radio-primary"
+                      />
+
+                      <span>
+                        Document
+                      </span>
+
+                    </label>
+
+                    {/* NON DOCUMENT */}
+                    <label className="flex items-center gap-2">
+
+                      <input
+                        type="radio"
+                        name="type"
+                        value="non-document"
+                        defaultChecked={
+                          selectedParcel.type === 'non-document'
+                        }
+                        className="radio radio-secondary"
+                      />
+
+                      <span>
+                        Non Document
+                      </span>
+
+                    </label>
+
+                  </div>
+
+                </div>
+
+                {/* SENDER NAME */}
+                <input
+                  type="text"
+                  name="senderName"
+                  defaultValue={selectedParcel.senderName}
+                  placeholder="Sender Name"
+                  className="input input-bordered w-full"
+                />
+
+                {/* SENDER CONTACT */}
+                <input
+                  type="number"
+                  name="senderContact"
+                  defaultValue={selectedParcel.senderContact}
+                  placeholder="Sender Contact"
+                  className="input input-bordered w-full"
+                />
+
+                {/* RECEIVER NAME */}
+                <input
+                  type="text"
+                  name="receiverName"
+                  defaultValue={selectedParcel.receiverName}
+                  placeholder="Receiver Name"
+                  className="input input-bordered w-full"
+                />
+
+                {/* RECEIVER CONTACT */}
+                <input
+                  type="number"
+                  name="receiverContact"
+                  defaultValue={selectedParcel.receiverContact}
+                  placeholder="Receiver Contact"
+                  className="input input-bordered w-full"
+                />
+
+                {/* ADDRESS */}
+                <textarea
+                  name="address"
+                  defaultValue={selectedParcel.address}
+                  placeholder="Delivery Address"
+                  className="textarea textarea-bordered md:col-span-2"
+                ></textarea>
+
+                {/* COST */}
+                <input
+                  type="number"
+                  name="cost"
+                  defaultValue={selectedParcel.cost}
+                  placeholder="Parcel Cost"
+                  className="input input-bordered md:col-span-2"
+                />
+
+                {/* BUTTONS */}
+                <div className="md:col-span-2 flex justify-end gap-3 mt-4">
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedParcel(null)}
+                    className="btn"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                  >
+                    Update Parcel
+                  </button>
+
+                </div>
+
+              </form>
+
+            </div>
+
+          </dialog>
+
+        )
+      }
+
     </div>
+
   );
+
 };
 
 export default MyParcel;

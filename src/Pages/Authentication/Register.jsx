@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import useAuth from '../../hooks/useAuth';
-import { NavLink } from 'react-router';
+import { NavLink, useNavigate } from 'react-router';
 import SocialLogin from './socialLogin/SocialLogin';
 import Swal from 'sweetalert2';
 
@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
 const Register = () => {
 const{register,handleSubmit, formState: { errors }}=useForm();
 const {signup}=useAuth();
-
+const navigate=useNavigate();
 const onSubmit=data=>{
     console.log(data);
  
@@ -18,13 +18,27 @@ const onSubmit=data=>{
       console.log(result.user)
       Swal.fire({
     title: 'Registration Successful!',
-    text: 'Welcome to ProFast',
+  
+    text:`Welcome to ProFast!!
+    Please use your mail id:${result.user.email} for the next login`,
     icon: 'success',
     confirmButtonText: 'Continue',
   });
+  
+       
     }).catch(error=>{
       console.log(error)
+      if(error.code === 'auth/email-already-in-use'){
+         Swal.fire({
+          title: 'Email Already Exists',
+          text: 'Please login with this email or use another email.',
+          icon: 'warning',
+          confirmButtonColor: '#d33'
+        });
+      }
     })
+     navigate('/login');
+ 
 }
     return (
         
