@@ -361,7 +361,7 @@ const{user}=useAuth()
                   type="text"
                   className="input input-bordered w-full"
                   placeholder='Sender Name'
-                  readOnly
+                  
                   {...register('senderName', {
                     required: true,
                   })}
@@ -374,7 +374,8 @@ const{user}=useAuth()
                 <input
                   type="text"
                   placeholder="Contact Number"
-                  className="input input-bordered w-full"
+                  className="input input-bordered w-full "
+                  maxLength={10}
                   {...register('senderContact', {
                     required: true,
                   })}
@@ -474,6 +475,7 @@ const{user}=useAuth()
                 <input
                   type="text"
                   placeholder="Receiver Contact"
+                   maxLength={10}
                   className="input input-bordered w-full"
                   {...register('receiverContact', {
                     required: true,

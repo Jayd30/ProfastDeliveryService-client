@@ -27,6 +27,8 @@ const MyParcel = () => {
 
   });
 
+
+
   // DELETE PARCEL
   const handleDelete = (id) => {
 
