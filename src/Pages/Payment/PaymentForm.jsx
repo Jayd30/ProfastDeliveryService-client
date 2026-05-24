@@ -99,22 +99,45 @@ const amount=parcel.cost;
     // SUCCESS
     else {
 
-      if (result.paymentIntent.status === 'succeeded') {
+     if (result.paymentIntent.status === 'succeeded') {
 
-        // ✅ CLEAR CARD FORM
-        card.clear();
+  // PAYMENT INFO
+  const paymentData = {
 
-        Swal.fire({
-          title: "Payment Successful!",
-          text: "Your parcel payment has been completed.",
-          icon: "success",
-          confirmButtonColor: "#16a34a"
-        });
+    parcelId: id,
 
-        // ✅ REDIRECT
-        navigate('/dashboard/myparcels');
+    email: parcel.created_by,
 
-      }
+    amount: amount,
+
+    transactionId: result.paymentIntent.id,
+
+    paymentMethod:
+      result.paymentIntent.payment_method_types[0],
+
+    paid_at: new Date()
+
+  };
+
+  // SAVE PAYMENT HISTORY
+  const paymentRes =
+    await axioSecu.post('/payments', paymentData);
+
+  console.log(paymentRes.data);
+
+  // CLEAR CARD
+  card.clear();
+
+  Swal.fire({
+    title: "Payment Successful!",
+    text: "Your parcel payment has been completed.",
+    icon: "success",
+    confirmButtonColor: "#16a34a"
+  });
+
+  navigate('/dashboard/myparcels');
+
+}
 
     }
     
@@ -222,6 +245,7 @@ const amount=parcel.cost;
     type='submit'
     disabled={!stripe}
   >
+
 
     {
       !stripe

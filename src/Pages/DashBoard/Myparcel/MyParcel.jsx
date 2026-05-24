@@ -10,7 +10,9 @@ const MyParcel = () => {
   const { user } = useAuth();
 
   const axiosSecure = secureAxios();
-const navigate=useNavigate()
+
+  const navigate = useNavigate();
+
   const [selectedParcel, setSelectedParcel] = useState(null);
 
   // GET PARCELS
@@ -34,10 +36,13 @@ const navigate=useNavigate()
     }
 
   });
-   const handlePay=(id)=>{
-    console.log("proceed to payment",id);
-    navigate(`/dashboard/payment/${id}`)
-  }
+
+  // PAYMENT PAGE
+  const handlePay = (id) => {
+
+    navigate(`/dashboard/payment/${id}`);
+
+  };
 
   // DELETE PARCEL
   const handleDelete = (id) => {
@@ -136,6 +141,7 @@ const navigate=useNavigate()
 
         <table className="table">
 
+          {/* TABLE HEAD */}
           <thead className="bg-primary text-white">
 
             <tr>
@@ -152,12 +158,15 @@ const navigate=useNavigate()
 
               <th>Tracking ID</th>
 
+              <th>Payment Status</th>
+
               <th>Actions</th>
 
             </tr>
 
           </thead>
 
+          {/* TABLE BODY */}
           <tbody>
 
             {
@@ -168,19 +177,21 @@ const navigate=useNavigate()
                   className="hover"
                 >
 
+                  {/* SERIAL */}
                   <td>{index + 1}</td>
 
+                  {/* TYPE */}
                   <td>
 
                     {
                       parcel.type === 'document'
                         ? (
-                          <span className="badge badge-info">
+                          <span className="badge badge-info text-white">
                             Document
                           </span>
                         )
                         : (
-                          <span className="badge badge-secondary">
+                          <span className="badge badge-secondary text-white">
                             Non Document
                           </span>
                         )
@@ -188,18 +199,42 @@ const navigate=useNavigate()
 
                   </td>
 
+                  {/* SENDER */}
                   <td>{parcel.senderName}</td>
 
+                  {/* RECEIVER */}
                   <td>{parcel.receiverName}</td>
 
+                  {/* COST */}
                   <td className="font-bold text-green-600">
                     ₹ {parcel.cost}
                   </td>
 
+                  {/* TRACKING ID */}
                   <td>
                     {parcel.trackingID}
                   </td>
 
+                  {/* PAYMENT STATUS */}
+                  <td>
+
+                    {
+                      parcel.payment_status === 'paid'
+                        ? (
+                          <span className="badge badge-success text-white">
+                            Paid
+                          </span>
+                        )
+                        : (
+                          <span className="badge badge-error text-white">
+                            Not Paid
+                          </span>
+                        )
+                    }
+
+                  </td>
+
+                  {/* ACTIONS */}
                   <td>
 
                     <div className="flex flex-wrap gap-2">
@@ -209,25 +244,30 @@ const navigate=useNavigate()
                         onClick={() => setSelectedParcel(parcel)}
                         className="btn btn-sm btn-warning text-white"
                       >
-                        Update
+                        Update Parcel
                       </button>
+
+                      {/* PAY */}
                       {
                         parcel.payment_status !== 'paid' && (
 
-                          <button onClick={()=>handlePay(parcel._id)} className="btn btn-sm btn-success text-white">
+                          <button
+                            onClick={() => handlePay(parcel._id)}
+                            className="btn btn-sm btn-success text-white"
+                          >
                             Pay
                           </button>
 
                         )
                       }
+
                       {/* DELETE */}
                       <button
                         onClick={() => handleDelete(parcel._id)}
                         className="btn btn-sm btn-error text-white"
                       >
-                        Delete
+                        Cancel Parcel
                       </button>
-                      
 
                     </div>
 
@@ -264,7 +304,7 @@ const navigate=useNavigate()
                 className="grid grid-cols-1 md:grid-cols-2 gap-4"
               >
 
-                {/* DOCUMENT TYPE */}
+                {/* PARCEL TYPE */}
                 <div className="md:col-span-2">
 
                   <label className="font-semibold mb-3 block">
