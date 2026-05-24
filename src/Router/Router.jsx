@@ -16,6 +16,7 @@ import ContactUs from '../Pages/Shared/ContactUs/Contactus';
 import Services from '../Pages/Shared/Service/Service';
 import Service from '../Pages/Shared/Service/Service';
 import Yourresponse from '../Pages/Yourresponse/Yourresponse';
+import Payement from '../Pages/Payment/Payement';
 
 
 
@@ -80,7 +81,11 @@ Component:MyParcel
         {
 path:'yourresponse',
 Component:Yourresponse
-  }
+  },
+   {
+            path:'payment/:id',
+            Component:Payement
+        }
         
     ]
   },

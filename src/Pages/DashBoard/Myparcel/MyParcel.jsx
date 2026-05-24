@@ -3,13 +3,14 @@ import { useQuery } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
 import useAuth from '../../../hooks/useAuth';
 import secureAxios from '../../../hooks/secureAxios';
+import { useNavigate } from 'react-router';
 
 const MyParcel = () => {
 
   const { user } = useAuth();
 
   const axiosSecure = secureAxios();
-
+const navigate=useNavigate()
   const [selectedParcel, setSelectedParcel] = useState(null);
 
   // GET PARCELS
@@ -33,6 +34,10 @@ const MyParcel = () => {
     }
 
   });
+   const handlePay=(id)=>{
+    console.log("proceed to payment",id);
+    navigate(`/dashboard/payment/${id}`)
+  }
 
   // DELETE PARCEL
   const handleDelete = (id) => {
@@ -206,7 +211,15 @@ const MyParcel = () => {
                       >
                         Update
                       </button>
+                      {
+                        parcel.payment_status !== 'paid' && (
 
+                          <button onClick={()=>handlePay(parcel._id)} className="btn btn-sm btn-success text-white">
+                            Pay
+                          </button>
+
+                        )
+                      }
                       {/* DELETE */}
                       <button
                         onClick={() => handleDelete(parcel._id)}
@@ -214,6 +227,7 @@ const MyParcel = () => {
                       >
                         Delete
                       </button>
+                      
 
                     </div>
 
