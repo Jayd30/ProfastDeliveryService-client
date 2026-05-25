@@ -1,43 +1,66 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useAuth from '../../hooks/useAuth';
 import { NavLink, useNavigate } from 'react-router';
 import SocialLogin from './socialLogin/SocialLogin';
 import Swal from 'sweetalert2';
 
-
+import { updateProfile } from 'firebase/auth';
+import axios from 'axios';
+import { number } from 'motion';
 const Register = () => {
 const{register,handleSubmit, formState: { errors }}=useForm();
 const {signup}=useAuth();
 const navigate=useNavigate();
+const [photoURL, setPhotoURL] = useState('');
+
+const handleImageUpload=async(e)=>{
+const image =e.target.files[0];
+console.log(image)
+const formData=new FormData();
+formData.append('image', image);
+const imgUploadURL=`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_upload_key}`
+const res=await axios.post(imgUploadURL,formData)
+setPhotoURL(res.data.data.url);
+}
 const onSubmit=data=>{
-    console.log(data);
+    console.log(data,);
  
-    signup(data.email,data.password)
-    .then(result=>{
-      console.log(result.user)
-      Swal.fire({
-    title: 'Registration Successful!',
-  
-    text:`Welcome to ProFast!!
-    Please use your mail id:${result.user.email} for the next login`,
-    icon: 'success',
-    confirmButtonText: 'Continue',
-  });
-  
-       
-    }).catch(error=>{
-      console.log(error)
-      if(error.code === 'auth/email-already-in-use'){
-         Swal.fire({
-          title: 'Email Already Exists',
-          text: 'Please login with this email or use another email.',
-          icon: 'warning',
-          confirmButtonColor: '#d33'
-        });
-      }
+   signup(data.email, data.password)
+
+  .then(async (result) => {
+
+    await updateProfile(result.user, {
+      displayName: data.name,
+        photoURL: photoURL
+      
+    });
+    const UserInfo={
+      number:data.number,
+      email: data.email
+
+    }
+     axios.post('http://localhost:3000/users',UserInfo)
+    .then(res=>{
+      console.log('number in the server',res)
     })
-     navigate('/login');
+
+    Swal.fire({
+      title: 'Registration Successful!',
+      text: `Welcome ${data.name} to ProFast!!`,
+      icon: 'success',
+      confirmButtonText: 'Continue',
+    });
+
+    navigate('/login');
+
+  })
+
+  .catch(error => {
+
+    console.log(error);
+
+  });
  
 }
     return (
@@ -53,10 +76,39 @@ const onSubmit=data=>{
         <h1 className="text-5xl font-bold">Register now!</h1>
         <form onSubmit={handleSubmit(onSubmit)}>
         <fieldset className="fieldset">
-          <label className="label">Email</label>
-          <input type="email"  {...register('email',{
+          <label className="label">Name</label>
+          <input type="text"  {...register('name',{
+            required:true 
+          })} className="input" placeholder="Write Your  Full Name" />
+          {
+            errors.name?.type ==='required'&&<p className='text-red-600'>Name is required</p>
+          }
+                  {/* image */}
+          <label className="label">Pic</label>
+          <input type="file" onChange={handleImageUpload}   className="input" placeholder="Write Your  Full Name" />
+          {
+            errors.name?.type ==='required'&&<p className='text-red-600'>Name is required</p>
+          }
+
+
+          <label className="label">Mobile Number</label>
+          
+          <input maxLength={10} type="text"  {...register('number',{
+            required:true, maxLength:10
+          })} className="input" placeholder="Write Your 10 Digit Mobile Number" />
+          {
+            errors.number?.type ==='required'&&<p className='text-red-600'>Number is required</p>
+          }
+
+
+
+           <label className="label">Email</label>
+          <input  type="email"  {...register('email',{
             required:true
           })} className="input" placeholder="Email" />
+          {
+            errors.email?.type==='required' && <p className='text-red-600'>Email is required</p>
+          }
 
           <label className="label">Password</label>
           <input type="password" {...register('password',{

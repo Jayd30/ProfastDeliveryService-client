@@ -41,7 +41,7 @@ const Login = () => {
 
         Swal.fire({
           title: 'Login Successful!',
-          text: 'Welcome back to ProFast',
+         text: `Welcome back ${result.user.displayName} to ProFast`,
           icon: 'success',
           confirmButtonText: 'Continue',
         });

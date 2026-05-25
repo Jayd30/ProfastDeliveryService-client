@@ -15,7 +15,7 @@ import useAuth from '../hooks/useAuth';
 const DashboardLayout = () => {
 
   const { logOut } = useAuth();
-
+const {user}=useAuth()
   // ACTIVE NAV STYLE
   const navItemClass = ({ isActive }) =>
     `flex items-center gap-3 px-5 py-3 rounded-2xl transition-all duration-300 font-medium group
@@ -57,8 +57,9 @@ const DashboardLayout = () => {
           <p className="text-gray-400 text-sm mt-3">
             Fast & Secure Parcel Delivery System
           </p>
-
+<p>Hey   <span className='font-bold'>{user.displayName}</span> welcome to the dashboard !!</p>
         </div>
+      
 
         {/* NAVIGATION */}
         <div className="space-y-3">
@@ -104,6 +105,14 @@ const DashboardLayout = () => {
             <FaUserCircle className="text-xl group-hover:rotate-6 transition-all duration-300" />
 
             Profile
+          </NavLink>
+          <NavLink
+            to="/dashboard/trackparcel"
+            className={navItemClass}
+          >
+            <FaUserCircle className="text-xl group-hover:rotate-6 transition-all duration-300" />
+
+            Track Parcel
           </NavLink>
           <NavLink
             to="/dashboard/yourresponse"

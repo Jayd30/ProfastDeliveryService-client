@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   FaUserCircle,
@@ -6,10 +6,26 @@ import {
   FaPhoneAlt,
 } from 'react-icons/fa';
 import useAuth from '../../hooks/useAuth';
+import axios from 'axios';
 
 const Profile = () => {
 
   const { user } = useAuth();
+  const [dbUser, setDbUser] = useState({});
+  useEffect(()=>{
+
+  if(user?.email){
+
+    axios.get(
+      `http://localhost:3000/users/${user.email}`
+    )
+    .then(res=>{
+      setDbUser(res.data)
+    })
+
+  }
+
+},[user])
 
   return (
 
@@ -130,7 +146,7 @@ const Profile = () => {
 
                   <p className="font-semibold text-gray-800">
                     {
-                      user?.phoneNumber || 'Not Added Yet'
+                     dbUser?.number || 'Not Added Yet'
                     }
                   </p>
 

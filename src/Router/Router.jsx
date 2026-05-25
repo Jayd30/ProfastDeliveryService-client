@@ -17,6 +17,7 @@ import Services from '../Pages/Shared/Service/Service';
 import Service from '../Pages/Shared/Service/Service';
 import Yourresponse from '../Pages/Yourresponse/Yourresponse';
 import Payement from '../Pages/Payment/Payement';
+import TrackParcel from '../Pages/DashBoard/TrackParcel/TrackParcel';
 
 
 
@@ -85,6 +86,10 @@ Component:Yourresponse
    {
             path:'payment/:id',
             Component:Payement
+        },
+        {
+            path:'trackparcel',
+            Component:TrackParcel
         }
         
     ]
