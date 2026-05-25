@@ -128,7 +128,7 @@ const onSubmit=data=>{
         </fieldset>
         <p>Already Have an Account? <NavLink to={'/login'} ><span className='text-green-500 font-bold hover:underline'>Login</span></NavLink></p>
             </form>
-            <SocialLogin></SocialLogin>
+            {/* <SocialLogin></SocialLogin> */}
       </div>
     </div>
   </div>

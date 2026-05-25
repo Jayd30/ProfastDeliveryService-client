@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   FaHome,
   FaBoxOpen,
   FaShippingFast,
   FaUserCircle,
   FaSignOutAlt,
+  FaMapMarkedAlt,
+  FaCommentDots,
+  FaClipboardCheck,
+  FaBars,
+  FaTimes,
 } from 'react-icons/fa';
 
 import { NavLink, Outlet } from 'react-router';
@@ -14,20 +19,21 @@ import useAuth from '../hooks/useAuth';
 
 const DashboardLayout = () => {
 
-  const { logOut } = useAuth();
-const {user}=useAuth()
+  const { logOut, user } = useAuth();
+
+  const [openSidebar, setOpenSidebar] = useState(false);
+
   // ACTIVE NAV STYLE
   const navItemClass = ({ isActive }) =>
-    `flex items-center gap-3 px-5 py-3 rounded-2xl transition-all duration-300 font-medium group
+    `flex items-center gap-4 px-5 py-3 rounded-2xl font-medium transition-all duration-300 group
     ${
       isActive
-        ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg scale-[1.02]'
-        : 'text-gray-600 hover:bg-gradient-to-r hover:from-indigo-100 hover:to-purple-100 hover:text-indigo-700 hover:translate-x-2'
+        ? 'bg-[#CAEB66] text-[#1B1F3B] shadow-lg'
+        : 'text-gray-600 hover:bg-[#CAEB66]/20 hover:text-[#1B1F3B] hover:translate-x-2'
     }`;
 
   // LOGOUT
   const handleLogout = () => {
-
     logOut()
       .then(() => {
         console.log('Logout Successful');
@@ -35,123 +41,225 @@ const {user}=useAuth()
       .catch(error => {
         console.log(error);
       });
-
   };
+
+  // NAVIGATION LINKS
+  const navLinks = (
+    <div className="space-y-3">
+
+      {/* HOME */}
+      <NavLink
+        to="/"
+        className={navItemClass}
+        onClick={() => setOpenSidebar(false)}
+      >
+        <FaHome className="text-lg group-hover:scale-110 transition-all duration-300" />
+        Home
+      </NavLink>
+
+      {/* MY PARCELS */}
+      <NavLink
+        to="/dashboard/myParcels"
+        className={navItemClass}
+        onClick={() => setOpenSidebar(false)}
+      >
+        <FaBoxOpen className="text-lg group-hover:scale-110 transition-all duration-300" />
+        My Parcels
+      </NavLink>
+
+      {/* SEND PARCEL */}
+      <NavLink
+        to="/bookParcel"
+        className={navItemClass}
+        onClick={() => setOpenSidebar(false)}
+      >
+        <FaShippingFast className="text-lg group-hover:scale-110 transition-all duration-300" />
+        Send Parcel
+      </NavLink>
+
+      {/* PROFILE */}
+      <NavLink
+        to="/dashboard/profile"
+        className={navItemClass}
+        onClick={() => setOpenSidebar(false)}
+      >
+        <FaUserCircle className="text-lg group-hover:scale-110 transition-all duration-300" />
+        Profile
+      </NavLink>
+
+      {/* TRACK PARCEL */}
+      <NavLink
+        to="/dashboard/trackparcel"
+        className={navItemClass}
+        onClick={() => setOpenSidebar(false)}
+      >
+        <FaMapMarkedAlt className="text-lg group-hover:scale-110 transition-all duration-300" />
+        Track Parcel
+      </NavLink>
+
+      {/* MY RESPONSE */}
+      <NavLink
+        to="/dashboard/yourresponse"
+        className={navItemClass}
+        onClick={() => setOpenSidebar(false)}
+      >
+        <FaCommentDots className="text-lg group-hover:scale-110 transition-all duration-300" />
+        My Response
+      </NavLink>
+
+      {/* RIDER APPLICATION STATUS */}
+      <NavLink
+        to="/dashboard/ridersapplication"
+        className={navItemClass}
+        onClick={() => setOpenSidebar(false)}
+      >
+        <FaClipboardCheck className="text-lg group-hover:scale-110 transition-all duration-300" />
+        Rider Application Status
+      </NavLink>
+
+    </div>
+  );
 
   return (
 
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-[#F5F7FA] overflow-hidden">
+
+      {/* MOBILE OVERLAY */}
+      <div
+        onClick={() => setOpenSidebar(false)}
+        className={`fixed inset-0 bg-black/40 z-40 transition-all duration-300 md:hidden
+        ${
+          openSidebar
+            ? 'opacity-100 visible'
+            : 'opacity-0 invisible'
+        }`}
+      />
 
       {/* SIDEBAR */}
-      <aside className="w-[300px] bg-white border-r border-gray-200 shadow-2xl px-6 py-8 hidden md:block">
+      <aside
+        className={`fixed md:static top-0 left-0 z-50 h-screen w-[290px]
+        bg-white border-r border-gray-200 shadow-2xl
+        px-6 py-6
+        transition-all duration-500
+        ${
+          openSidebar
+            ? 'translate-x-0'
+            : '-translate-x-full md:translate-x-0'
+        }`}
+      >
 
-        {/* LOGO */}
-        <div className="mb-14">
+        <div className="flex flex-col h-full justify-between">
 
-          <div className="flex items-center gap-3">
+          {/* TOP SECTION */}
+          <div>
 
-            <Navbarlogo />
+            {/* MOBILE CLOSE BUTTON */}
+            <div className="flex justify-end md:hidden mb-4">
+
+              <button
+                onClick={() => setOpenSidebar(false)}
+                className="bg-[#CAEB66] p-2 rounded-xl text-[#1B1F3B]"
+              >
+                <FaTimes />
+              </button>
+
+            </div>
+
+            {/* LOGO */}
+            <div className="mb-10">
+
+              <div className="bg-[#F8FAF2] rounded-2xl p-4 shadow-sm border border-[#CAEB66]/20">
+
+                <Navbarlogo />
+
+              </div>
+
+              <p className="text-gray-400 text-sm mt-4 leading-relaxed">
+                Fast & Secure Parcel Delivery System
+              </p>
+
+              {/* USER CARD */}
+              <div className="mt-5 bg-[#CAEB66]/10 border border-[#CAEB66]/20 rounded-2xl p-4">
+
+                <p className="text-gray-700 text-sm">
+                  Hey 👋
+                </p>
+
+                <h2 className="font-bold text-[#1B1F3B] text-lg mt-1 break-words">
+                  {user?.displayName}
+                </h2>
+
+                <p className="text-xs text-gray-500 mt-1">
+                  Welcome to your dashboard
+                </p>
+
+              </div>
+
+            </div>
+
+            {/* NAVIGATION */}
+            {navLinks}
 
           </div>
 
-          <p className="text-gray-400 text-sm mt-3">
-            Fast & Secure Parcel Delivery System
-          </p>
-<p>Hey   <span className='font-bold'>{user.displayName}</span> welcome to the dashboard !!</p>
-        </div>
-      
+          {/* LOGOUT BUTTON */}
+          <div className="pt-8">
 
-        {/* NAVIGATION */}
-        <div className="space-y-3">
+            {/* <button
+              onClick={handleLogout}
+              className="w-full bg-[#CAEB66] hover:bg-[#b8da54]
+              text-[#1B1F3B] font-semibold
+              py-3 rounded-2xl 
+              flex items-center justify-center gap-3
+              shadow-lg hover:shadow-xl
+              transition-all duration-300 hover:scale-[1.02]"
+            >
+              <FaSignOutAlt className="text-lg" />
+              Logout
+            </button> */}
 
-          {/* HOME */}
-          <NavLink
-            to="/"
-            className={navItemClass}
-          >
-            <FaHome className="text-xl group-hover:rotate-6 transition-all duration-300" />
-
-            Home
-          </NavLink>
-
-
-          {/* MY PARCEL */}
-          <NavLink
-            to="/dashboard/myParcels"
-            className={navItemClass}
-          >
-            <FaBoxOpen className="text-xl group-hover:rotate-6 transition-all duration-300" />
-
-            My Parcels
-          </NavLink>
-
-
-          {/* BOOK PARCEL */}
-          <NavLink
-            to="/bookParcel"
-            className={navItemClass}
-          >
-            <FaShippingFast className="text-xl group-hover:rotate-6 transition-all duration-300" />
-
-            Send Parcel
-          </NavLink>
-
-
-          {/* PROFILE */}
-          <NavLink
-            to="/dashboard/profile"
-            className={navItemClass}
-          >
-            <FaUserCircle className="text-xl group-hover:rotate-6 transition-all duration-300" />
-
-            Profile
-          </NavLink>
-          <NavLink
-            to="/dashboard/trackparcel"
-            className={navItemClass}
-          >
-            <FaUserCircle className="text-xl group-hover:rotate-6 transition-all duration-300" />
-
-            Track Parcel
-          </NavLink>
-          <NavLink
-            to="/dashboard/yourresponse"
-            className={navItemClass}
-          >
-            <FaShippingFast className="text-xl group-hover:rotate-6 transition-all duration-300" />
-
-            My Response
-          </NavLink>
-
-        </div>
-
-        {/* LOGOUT BUTTON */}
-        <div className="mt-20">
-
+          </div>
 
         </div>
 
       </aside>
 
-
       {/* MAIN CONTENT */}
-      <main className="flex-1 p-4 md:p-8 overflow-x-hidden">
+      <main className="flex-1 overflow-x-hidden">
 
         {/* MOBILE TOPBAR */}
-        <div className="md:hidden mb-6 bg-white rounded-2xl shadow-lg p-4 flex items-center justify-between">
+        <div className="md:hidden sticky top-0 z-30 bg-white shadow-md px-4 py-4 flex items-center justify-between">
+
+          <button
+            onClick={() => setOpenSidebar(true)}
+            className="bg-[#CAEB66] hover:bg-[#b8da54]
+            text-[#1B1F3B]
+            p-3 rounded-xl
+            transition-all duration-300"
+          >
+            <FaBars />
+          </button>
 
           <Navbarlogo />
-
-          <button className="btn btn-sm btn-primary">
-            Menu
-          </button>
 
         </div>
 
         {/* PAGE CONTENT */}
-        <div className="bg-white min-h-[calc(100vh-60px)] rounded-3xl shadow-xl p-4 md:p-8">
+        <div className="p-4 md:p-8">
 
-          <Outlet />
+          <div
+            className="bg-white
+            min-h-[calc(100vh-40px)]
+            rounded-[30px]
+            shadow-lg
+            border border-gray-100
+            p-4 md:p-8
+            transition-all duration-300"
+          >
+
+            <Outlet />
+
+          </div>
 
         </div>
 

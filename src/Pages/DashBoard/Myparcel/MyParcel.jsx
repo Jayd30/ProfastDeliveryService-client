@@ -127,11 +127,11 @@ const MyParcel = () => {
       {/* HEADING */}
       <div className="mb-8">
 
-        <h1 className="text-3xl md:text-4xl font-bold text-primary">
+        <h1 className="text-3xl md:text-4xl  font-bold text-black">
           My Parcels
         </h1>
 
-        <p className="text-gray-500 mt-2">
+        <p className="text-black mt-2">
           Total Parcels: {parcels.length}
         </p>
 
@@ -143,7 +143,7 @@ const MyParcel = () => {
         <table className="table">
 
           {/* TABLE HEAD */}
-          <thead className="bg-primary text-white">
+          <thead className="bg-[#CAEB66] hover:bg-[#b8da54]">
 
             <tr>
 

@@ -18,6 +18,8 @@ import Service from '../Pages/Shared/Service/Service';
 import Yourresponse from '../Pages/Yourresponse/Yourresponse';
 import Payement from '../Pages/Payment/Payement';
 import TrackParcel from '../Pages/DashBoard/TrackParcel/TrackParcel';
+import BeARider from '../Pages/DashBoard/BeARider/BeARider';
+import RiderApplication from '../Pages/DashBoard/RiderApplication/RiderApplication';
 
 
 
@@ -41,6 +43,10 @@ Component:ContactUs
         {
             path:'coverage',
             Component:Coverage
+        },
+        {
+            path:'bearider',
+            element:<PrivateRoutes><BeARider></BeARider></PrivateRoutes>
         },
         {
 path:'/services',
@@ -90,6 +96,10 @@ Component:Yourresponse
         {
             path:'trackparcel',
             Component:TrackParcel
+        },
+        {
+            path:'ridersapplication',
+            Component:RiderApplication
         }
         
     ]

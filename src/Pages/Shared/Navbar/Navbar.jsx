@@ -73,6 +73,9 @@ const Navbar = () => {
             <NavLink to="/about" className={navLinkClass}>
               About Us
             </NavLink>
+            <NavLink to="/bearider" className={navLinkClass}>
+              Be A Rider
+            </NavLink>
 
             <NavLink to="/services" className={navLinkClass}>
               Services
@@ -109,7 +112,7 @@ const Navbar = () => {
 
                 <NavLink to="/register">
 
-                  <button className="px-6 py-3 rounded-2xl bg-gradient-to-r from-green-300 to-blue-500 text-white font-semibold shadow-lg hover:scale-105 transition-all duration-300">
+                  <button className="px-6 py-3 rounded-2xl bg-[#CAEB66] text-black font-semibold shadow-lg hover:scale-105 transition-all duration-300">
                     Get Started
                   </button>
 

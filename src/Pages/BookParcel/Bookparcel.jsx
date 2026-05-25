@@ -202,6 +202,7 @@ const{user}=useAuth()
       axiosSecu.post('/parcels',parcelData)
       .then(res=>{
         console.log(res.data)
+        
         if(res.data.insertedId){
           Swal.fire({
 
