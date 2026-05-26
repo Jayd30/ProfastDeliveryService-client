@@ -9,18 +9,18 @@ const {user}=useAuth()
 
   const [riders, setRiders] = useState([]);
 
-  useEffect(() => {
+useEffect(()=>{
 
-    axiosSecu.get('/riders')
-      .then(res => {
 
-        console.log(res.data);
+if(user?.email){
+  axiosSecu.get(`/riders/${user.email}`)
+  .then(res=>{
+    setRiders(res.data)
+  })
+}
 
-        setRiders(res.data);
-
-      })
-
-  }, []);
+})
+    
 
   return (
 

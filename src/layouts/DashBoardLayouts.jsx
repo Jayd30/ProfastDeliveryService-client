@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FaHome,
   FaBoxOpen,
@@ -17,9 +17,23 @@ import { NavLink, Outlet } from 'react-router';
 import Navbarlogo from '../Pages/Shared/Navbarlogo/Navbarlogo';
 import useAuth from '../hooks/useAuth';
 
+
 const DashboardLayout = () => {
 
   const { logOut, user } = useAuth();
+  const [dbUser, setDbUser] = useState(null);
+
+useEffect(() => {
+
+  if (user?.email) {
+
+    fetch(`http://localhost:3000/users/${user.email}`)
+      .then(res => res.json())
+      .then(data => setDbUser(data));
+
+  }
+
+}, [user]);
 
   const [openSidebar, setOpenSidebar] = useState(false);
 
@@ -32,6 +46,7 @@ const DashboardLayout = () => {
         : 'text-gray-600 hover:bg-[#CAEB66]/20 hover:text-[#1B1F3B] hover:translate-x-2'
     }`;
 
+    
   // LOGOUT
   const handleLogout = () => {
     logOut()
@@ -116,7 +131,17 @@ const DashboardLayout = () => {
         <FaClipboardCheck className="text-lg group-hover:scale-110 transition-all duration-300" />
         Rider Application Status
       </NavLink>
-
+      {/* make admin */}
+        {dbUser?.role === "admin" && (
+  <NavLink
+    to="/dashboard/makeadmin"
+    className={navItemClass}
+    onClick={() => setOpenSidebar(false)}
+  >
+    <FaClipboardCheck className="text-lg group-hover:scale-110 transition-all duration-300" />
+    Admin Desk
+  </NavLink>
+)}
     </div>
   );
 

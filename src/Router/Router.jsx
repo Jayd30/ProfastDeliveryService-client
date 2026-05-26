@@ -20,6 +20,7 @@ import Payement from '../Pages/Payment/Payement';
 import TrackParcel from '../Pages/DashBoard/TrackParcel/TrackParcel';
 import BeARider from '../Pages/DashBoard/BeARider/BeARider';
 import RiderApplication from '../Pages/DashBoard/RiderApplication/RiderApplication';
+import MakeAdmin from '../Pages/DashBoard/MakeAdmin/MakeAdmin';
 
 
 
@@ -100,6 +101,10 @@ Component:Yourresponse
         {
             path:'ridersapplication',
             Component:RiderApplication
+        },
+        {
+            path:'makeadmin',
+            Component:MakeAdmin
         }
         
     ]
