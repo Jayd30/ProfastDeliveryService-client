@@ -34,11 +34,11 @@ const Profile = () => {
       {/* HEADING */}
       <div className="mb-10">
 
-        <h1 className="text-4xl font-bold text-primary mb-3">
+        <h1 className="text-4xl font-bold text-[#b8da54] mb-3">
           My Profile
         </h1>
 
-        <p className="text-gray-500">
+        <p className="text-black  font-bold">
           Manage your personal information and account details.
         </p>
 
@@ -49,7 +49,7 @@ const Profile = () => {
       <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
 
         {/* TOP BANNER */}
-        <div className="h-40 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 relative">
+        <div className="h-40  bg-[#CAEB66] hover:bg-[#b8da54] relative">
 
           {/* PROFILE IMAGE */}
           <div className="absolute -bottom-16 left-10">
@@ -100,13 +100,13 @@ const Profile = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
 
             {/* EMAIL */}
-            <div className="bg-gray-50 hover:bg-indigo-50 transition-all duration-300 rounded-2xl p-6 border border-gray-100 hover:shadow-lg">
+            <div className= " bg-gray-50 hover:bg-indigo-50 transition-all duration-300 rounded-2xl p-6 border border-gray-100 hover:shadow-lg">
 
               <div className="flex items-center gap-4">
 
                 <div className="w-14 h-14 rounded-2xl bg-indigo-100 flex items-center justify-center">
 
-                  <FaEnvelope className="text-2xl text-indigo-600" />
+                  <FaEnvelope className="text-2xl text-[#b8da54]" />
 
                 </div>
 
@@ -130,17 +130,17 @@ const Profile = () => {
             {/* MOBILE */}
             <div className="bg-gray-50 hover:bg-green-50 transition-all duration-300 rounded-2xl p-6 border border-gray-100 hover:shadow-lg">
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4  rounded-2xl">
 
                 <div className="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center">
 
-                  <FaPhoneAlt className="text-2xl text-green-600" />
+                  <FaPhoneAlt className="text-2xl text-[#b8da54]" />
 
                 </div>
 
-                <div>
+                <div >
 
-                  <h3 className="text-gray-500 text-sm">
+                  <h3 className="text-gray-500  text-sm">
                     Mobile Number
                   </h3>
 
@@ -162,11 +162,11 @@ const Profile = () => {
           {/* EDIT BUTTON */}
           <div className="mt-10">
 
-            <button className="btn btn-primary rounded-2xl px-8 hover:scale-105 transition-all duration-300">
+            {/* <button className="btn btn-primary rounded-2xl px-8 hover:scale-105 transition-all duration-300">
 
               Edit Profile
 
-            </button>
+            </button> */}
 
           </div>
 

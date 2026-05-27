@@ -11,9 +11,11 @@ import {
   signInWithPopup,
   signOut
 } from 'firebase/auth';
+import axios from 'axios';
+import secureAxios from '../../hooks/secureAxios';
 
 const AuthProvider = ({ children }) => {
-
+const axioSecu=secureAxios()
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -44,8 +46,11 @@ const AuthProvider = ({ children }) => {
 
   // LOGOUT
   const logOut = () => {
+     
     setLoading(true);
+    
     return signOut(auth);
+   
   };
 
   // OBSERVER
@@ -55,6 +60,18 @@ const AuthProvider = ({ children }) => {
 
       setUser(currentUser);
       setLoading(false);
+      if(currentUser?.email){
+        const user={
+          email:currentUser.email
+        }
+
+        axioSecu.post('/jwt',user)
+        .then(res=>{
+          console.log('token',res.data)
+          
+        }).catch(error=>console.log(error))
+      }
+    
 
     });
 

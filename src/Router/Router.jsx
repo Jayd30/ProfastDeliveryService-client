@@ -64,6 +64,7 @@ Component:Service
     path:'/',
     Component:AuthLayouts,
     children:[
+        
         {
             path:'login',
             Component:Login
@@ -78,6 +79,10 @@ Component:Service
     path:'/dashboard',
   element:<PrivateRoutes><DashBoardLayouts></DashBoardLayouts></PrivateRoutes>,
     children:[
+         {
+            index:true,
+            Component:MyParcel
+        },
         {
 path:'myParcels',
 Component:MyParcel

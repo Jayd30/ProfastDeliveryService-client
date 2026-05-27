@@ -7,12 +7,19 @@ import {
   FaUser,
   FaEnvelope,
 } from "react-icons/fa";
+import useAuth from "../../../hooks/useAuth";
 
 const SearchUsers = () => {
+
+  const { user } = useAuth();
 
   const [email, setEmail] = useState("");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // PAGINATION STATES
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 4;
 
   // =========================
   // SEARCH USERS
@@ -20,12 +27,10 @@ const SearchUsers = () => {
   const handleSearch = async () => {
 
     if (!email) {
-
       return Swal.fire({
         icon: "warning",
         title: "Please Enter Email",
       });
-
     }
 
     try {
@@ -37,19 +42,16 @@ const SearchUsers = () => {
       );
 
       setUsers(res.data);
+      setCurrentPage(1); // RESET PAGE ON SEARCH
 
       setLoading(false);
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
       console.log(error);
-
       setLoading(false);
 
     }
-
   };
 
   // =========================
@@ -63,8 +65,6 @@ const SearchUsers = () => {
         `http://localhost:3000/users/admin/${id}`
       );
 
-      console.log(res.data);
-
       if (res.data.modifiedCount > 0) {
 
         Swal.fire({
@@ -74,20 +74,14 @@ const SearchUsers = () => {
           showConfirmButton: false,
         });
 
-        // UPDATE UI
-        const updatedUsers = users.map(user =>
-          user._id === id
-            ? { ...user, role: "admin" }
-            : user
+        const updated = users.map(u =>
+          u._id === id ? { ...u, role: "admin" } : u
         );
 
-        setUsers(updatedUsers);
-
+        setUsers(updated);
       }
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
       console.log(error);
 
@@ -97,63 +91,97 @@ const SearchUsers = () => {
       });
 
     }
-
   };
+
+  // =========================
+  // REMOVE ADMIN
+  // =========================
+  const removeAdmin = async (id) => {
+
+    try {
+
+      const res = await axios.patch(
+        `http://localhost:3000/users/remove-admin/${id}`,
+        {
+          requesterEmail: user.email
+        }
+      );
+
+      if (res.data.modifiedCount > 0) {
+
+        Swal.fire({
+          icon: "success",
+          title: "Admin Removed",
+        });
+
+        const updated = users.map(u =>
+          u._id === id ? { ...u, role: "user" } : u
+        );
+
+        setUsers(updated);
+      }
+
+    } catch (error) {
+
+      console.log(error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Failed to remove admin",
+      });
+
+    }
+  };
+
+  // =========================
+  // PAGINATION LOGIC
+  // =========================
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(users.length / usersPerPage);
 
   return (
 
-    <div className="min-h-screen bg-[#F5F7FA] p-4 md:p-8">
+    <div className=" bg-[#F5F7FA] p-4 md:p-">
 
       {/* HEADER */}
       <div className="mb-10">
 
-        <h1 className="text-4xl md:text-5xl font-black text-[#1B1F3B]">
+        <h1 className="text-4xl font-black text-[#1B1F3B]">
           Search Users
         </h1>
 
         <p className="text-gray-500 mt-2">
-          Search users by email and manage admin access.
+          Search users and manage admin access.
         </p>
 
       </div>
 
       {/* SEARCH BOX */}
-      <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 md:p-8">
+      <div className="bg-white rounded-3xl shadow-xl p-6">
 
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex gap-4">
 
-          {/* INPUT */}
           <div className="flex-1 relative">
 
-            <FaEnvelope className="absolute left-5 top-5 text-gray-400 text-lg" />
+            <FaEnvelope className="absolute left-5 top-5 text-gray-400" />
 
             <input
               type="text"
-              placeholder="Search user by email..."
+              placeholder="Search user..."
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-14 pr-4 py-4 rounded-2xl border border-gray-200 focus:outline-none focus:border-[#CAEB66]"
+              className="w-full pl-14 py-4 border rounded-2xl"
             />
 
           </div>
 
-          {/* BUTTON */}
           <button
             onClick={handleSearch}
-            className="bg-[#CAEB66] hover:bg-[#b8da54]
-            text-[#1B1F3B]
-            font-bold
-            px-8 py-4
-            rounded-2xl
-            flex items-center justify-center gap-3
-            transition-all duration-300
-            shadow-lg hover:shadow-xl"
+            className="bg-[#CAEB66] px-6 py-4 rounded-2xl font-bold"
           >
-
-            <FaSearch />
-
-            Search
-
+            <FaSearch /> Search
           </button>
 
         </div>
@@ -161,118 +189,85 @@ const SearchUsers = () => {
       </div>
 
       {/* LOADING */}
-      {
-        loading &&
-        <div className="flex justify-center mt-10">
-
-          <span className="loading loading-spinner loading-lg text-[#CAEB66]"></span>
-
+      {loading && (
+        <div className="mt-10 text-center">
+          Loading...
         </div>
-      }
+      )}
 
       {/* USERS */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-10">
 
-        {
-          users.length > 0
-            ? users.map(user => (
+        {currentUsers.length > 0 ? currentUsers.map((u) => (
 
-              <div
-                key={user._id}
-                className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+          <div key={u._id} className="bg-white p-6 rounded-2xl shadow">
+
+            <h2 className="font-bold">{u.email}</h2>
+
+            <p className={u.role === "admin" ? "text-green-600" : "text-gray-500"}>
+              {u.role || "user"}
+            </p>
+
+            {/* MAKE ADMIN */}
+            {u.role !== "admin" && (
+              <button
+                onClick={() => handleMakeAdmin(u._id)}
+                className="bg-green-400 px-4 py-2 mt-4 rounded"
               >
+                <FaUserShield /> Make Admin
+              </button>
+            )}
 
-                {/* TOP */}
-                <div className="flex items-center gap-4">
+            {/* REMOVE ADMIN */}
+            {u.role === "admin" && (
+              <button
+                onClick={() => removeAdmin(u._id)}
+                className="bg-red-500 text-white px-4 py-2 mt-2 rounded"
+              >
+                Remove Admin
+              </button>
+            )}
 
-                  <div className="w-16 h-16 rounded-full bg-[#CAEB66]/20 flex items-center justify-center">
+          </div>
 
-                    <FaUser className="text-2xl text-[#1B1F3B]" />
-
-                  </div>
-
-                  <div>
-
-                    <h2 className="text-xl font-bold text-[#1B1F3B] break-all">
-                      {user.email}
-                    </h2>
-
-                    <p
-                      className={`font-semibold mt-1 capitalize
-                      ${
-                        user.role === 'admin'
-                          ? 'text-green-600'
-                          : 'text-gray-500'
-                      }`}
-                    >
-                      {user.role || 'user'}
-                    </p>
-
-                  </div>
-
-                </div>
-
-                {/* BUTTON */}
-                <div className="mt-6">
-
-                  {
-                    user.role === 'admin'
-                      ? (
-                        <button
-                          disabled
-                          className="w-full bg-green-100 text-green-700 py-3 rounded-2xl font-bold cursor-not-allowed"
-                        >
-                          Already Admin
-                        </button>
-                      )
-                      : (
-                        <button
-                          onClick={() => handleMakeAdmin(user._id)}
-                          className="w-full bg-[#CAEB66] hover:bg-[#b8da54]
-                          text-[#1B1F3B]
-                          font-bold
-                          py-3
-                          rounded-2xl
-                          flex items-center justify-center gap-3
-                          transition-all duration-300
-                          shadow-md hover:shadow-xl"
-                        >
-
-                          <FaUserShield />
-
-                          Make Admin
-
-                        </button>
-                      )
-                  }
-
-                </div>
-
-              </div>
-
-            ))
-
-            : !loading && (
-
-              <div className="col-span-full bg-white rounded-3xl shadow-lg p-10 text-center">
-
-                <h2 className="text-2xl font-bold text-gray-500">
-                  No Users Found
-                </h2>
-
-                <p className="text-gray-400 mt-2">
-                  Search users by their email address.
-                </p>
-
-              </div>
-
-            )
-        }
+        )) : (
+          !loading && (
+            <p className="text-center mt-10 text-gray-500 col-span-full">
+              No Users Found
+            </p>
+          )
+        )}
 
       </div>
 
-    </div>
+      {/* PAGINATION */}
+      {users.length > 0 && (
+        <div className="flex justify-center items-center gap-4 mt-10">
 
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(prev => prev - 1)}
+            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+          >
+            Prev
+          </button>
+
+          <span className="font-bold">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(prev => prev + 1)}
+            className="px-4 py-2 bg-[#CAEB66] rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+
+        </div>
+      )}
+
+    </div>
   );
 };
 

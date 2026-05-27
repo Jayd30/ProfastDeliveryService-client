@@ -4,8 +4,15 @@ import { NavLink } from 'react-router';
 import Navbarlogo from '../Navbarlogo/Navbarlogo';
 import useAuth from '../../../hooks/useAuth';
 import Swal from 'sweetalert2';
-
+8208491126
 const Navbar = () => {
+ const navItemClass = ({ isActive }) =>
+    `flex items-center gap-4 px-5 py-3 rounded-2xl font-medium transition-all duration-300 group
+    ${
+      isActive
+        ? 'bg-[#CAEB66] text-[#1B1F3B] shadow-lg'
+        : 'text-gray-600 hover:bg-[#CAEB66]/20 hover:text-[#1B1F3B] hover:translate-x-2'
+    }`;
 
   const [open, setOpen] = useState(false);
 
@@ -58,36 +65,36 @@ const Navbar = () => {
           {/* DESKTOP MENU */}
           <nav className="hidden lg:flex items-center gap-3 bg-black/30 backdrop-blur-lg px-4 py-2 rounded-2xl border border-white/20 shadow-md">
 
-            <NavLink to="/" className={navLinkClass}>
+            <NavLink to="/" className={navItemClass}>
               Home
             </NavLink>
 
-            <NavLink to="/bookParcel" className={navLinkClass}>
+            <NavLink to="/bookParcel" className={navItemClass}>
               Send A Parcel
             </NavLink>
 
-            <NavLink to="/coverage" className={navLinkClass}>
+            <NavLink to="/coverage" className={navItemClass}>
               Coverage
             </NavLink>
 
-            <NavLink to="/about" className={navLinkClass}>
+            <NavLink to="/about" className={navItemClass}>
               About Us
             </NavLink>
-            <NavLink to="/bearider" className={navLinkClass}>
+            <NavLink to="/bearider" className={navItemClass}>
               Be A Rider
             </NavLink>
 
-            <NavLink to="/services" className={navLinkClass}>
+            <NavLink to="/services" className={navItemClass}>
               Services
             </NavLink>
 
-            <NavLink to="/contact" className={navLinkClass}>
+            <NavLink to="/contact" className={navItemClass}>
               Contact
             </NavLink>
 
             {
               user && (
-                <NavLink to="/dashboard" className={navLinkClass}>
+                <NavLink to="/dashboard" className={navItemClass}>
                   Dashboard
                 </NavLink>
               )
