@@ -1,12 +1,14 @@
 import React from 'react';
 import Banner from './Banner/Banner';
 import Servicesection from './serviceSection/Servicesection';
-import Clientservice from './serviceSection/clientservice';
+
 import Benifits from './serviceSection/Benifits';
 import BeMarchant from './BeMerchant/BeMarchant';
 import HowWorks from './HowWorks/HowWorks';
 import Faq from './FAQ/Faq';
 import TestimonialSection from './TestimonialSection/TestimonialSection';
+import Clientservice from './serviceSection/Clientservice';
+
 
 
 const Home = () => {
@@ -15,7 +17,7 @@ const Home = () => {
            <Banner></Banner>
            <HowWorks></HowWorks>
            <Servicesection></Servicesection>
-           <Clientservice></Clientservice>
+         <Clientservice></Clientservice>
            <Benifits></Benifits>
            <BeMarchant></BeMarchant>
            <TestimonialSection></TestimonialSection>

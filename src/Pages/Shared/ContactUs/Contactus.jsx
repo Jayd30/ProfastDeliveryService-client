@@ -110,7 +110,7 @@ Swal.fire({
                 </h3>
 
                 <p className="text-gray-300">
-                  +91 8910789810
+                  +91 9903870713
                 </p>
               </div>
 
@@ -212,7 +212,7 @@ Swal.fire({
 
                 <input
                   type="email"
-                  value={user?.email || ""}
+                  // value={user?.email || ""}
                   placeholder="Enter your email"
                   {...register('email', {
                     required: true

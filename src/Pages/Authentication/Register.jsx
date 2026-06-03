@@ -4,137 +4,287 @@ import useAuth from '../../hooks/useAuth';
 import { NavLink, useNavigate } from 'react-router';
 import SocialLogin from './socialLogin/SocialLogin';
 import Swal from 'sweetalert2';
-
 import { updateProfile } from 'firebase/auth';
 import axios from 'axios';
-import { number } from 'motion';
+
 const Register = () => {
-const{register,handleSubmit, formState: { errors }}=useForm();
-const {signup}=useAuth();
-const navigate=useNavigate();
-const [photoURL, setPhotoURL] = useState('');
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm();
 
-const handleImageUpload=async(e)=>{
-const image =e.target.files[0];
-console.log(image)
-const formData=new FormData();
-formData.append('image', image);
-const imgUploadURL=`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_upload_key}`
-const res=await axios.post(imgUploadURL,formData)
-setPhotoURL(res.data.data.url);
-}
-const onSubmit=data=>{
-    console.log(data,);
- 
-   signup(data.email, data.password)
+  const { signup } = useAuth();
+  const navigate = useNavigate();
 
-  .then(async (result) => {
+  const [photoURL, setPhotoURL] = useState('');
+  const [uploading, setUploading] = useState(false);
 
-    await updateProfile(result.user, {
-      displayName: data.name,
-        photoURL: photoURL
-      
-    });
-    const UserInfo={
-      number:data.number,
-      email: data.email
+  const handleImageUpload = async (e) => {
+    const image = e.target.files[0];
+
+    if (!image) return;
+
+    try {
+      setUploading(true);
+
+      const formData = new FormData();
+      formData.append('image', image);
+
+      const imgUploadURL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_upload_key}`;
+
+      const res = await axios.post(imgUploadURL, formData);
+
+      setPhotoURL(res.data.data.url);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Image Uploaded'
+      });
+
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const onSubmit = async (data) => {
+    try {
+
+      const result = await signup(
+        data.email,
+        data.password
+      );
+
+      await updateProfile(result.user, {
+        displayName: data.name,
+        photoURL
+      });
+
+      const userInfo = {
+        name: data.name,
+        number: data.number,
+        email: data.email,
+        photoURL
+      };
+
+      await axios.post(
+        'http://localhost:3000/users',
+        userInfo
+      );
+
+      Swal.fire({
+        title: 'Registration Successful!',
+        text: `Welcome ${data.name} to ProFast`,
+        icon: 'success'
+      });
+
+      navigate('/login');
+
+    } catch (error) {
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Registration Failed',
+        text: error.message
+      });
 
     }
-     axios.post('http://localhost:3000/users',UserInfo)
-    .then(res=>{
-      console.log('number in the server',res)
-    })
+  };
 
-    Swal.fire({
-      title: 'Registration Successful!',
-      text: `Welcome ${data.name} to ProFast!!`,
-      icon: 'success',
-      confirmButtonText: 'Continue',
-    });
+  return (
+    <div className="w-full max-w-lg">
 
-    navigate('/login');
+      {/* Mobile Hero */}
+      <div className="lg:hidden mb-6">
 
-  })
+        <div className="bg-[#CAEB66] rounded-2xl p-5">
 
-  .catch(error => {
+          <h2 className="text-3xl font-bold">
+            Join ProFast 🚚
+          </h2>
 
-    console.log(error);
+          <p className="mt-2 text-black/80">
+            Fast delivery, secure tracking and
+            real-time parcel management.
+          </p>
 
-  });
- 
-}
-    return (
-        
-     <div className=" bg-base-200 ml-10">
-  <div className="hero-content flex-col lg:flex-row-reverse">
-    <div className="text-center lg:text-left">
-      
-      
-    </div>
-    <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-      <div className="card-body">
-        <h1 className="text-5xl font-bold">Register now!</h1>
-        <form onSubmit={handleSubmit(onSubmit)}>
-        <fieldset className="fieldset">
-          <label className="label">Name</label>
-          <input type="text"  {...register('name',{
-            required:true 
-          })} className="input" placeholder="Write Your  Full Name" />
-          {
-            errors.name?.type ==='required'&&<p className='text-red-600'>Name is required</p>
-          }
-                  {/* image */}
-          <label className="label">Pic</label>
-          <input type="file" onChange={handleImageUpload}   className="input" placeholder="Write Your  Full Name" />
-          {
-            errors.name?.type ==='required'&&<p className='text-red-600'>Name is required</p>
-          }
+        </div>
 
-
-          <label className="label">Mobile Number</label>
-          
-          <input maxLength={10} type="text"  {...register('number',{
-            required:true, maxLength:10
-          })} className="input" placeholder="Write Your 10 Digit Mobile Number" />
-          {
-            errors.number?.type ==='required'&&<p className='text-red-600'>Number is required</p>
-          }
-
-
-
-           <label className="label">Email</label>
-          <input  type="email"  {...register('email',{
-            required:true
-          })} className="input" placeholder="Email" />
-          {
-            errors.email?.type==='required' && <p className='text-red-600'>Email is required</p>
-          }
-
-          <label className="label">Password</label>
-          <input type="password" {...register('password',{
-            required:true, minLength:8, maxLength:10,pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-          })} className="input" placeholder="Password" />
-{
-    errors.password?.type ==='required'&&<p>Password is required</p>
-}
-{
-    errors.password?.type ==='pattern'&&<p className='text-red-700'>Password must be one upper and onw smaller one numeric & one special,  </p>
-}
-{
-    errors.password?.type==='maxLength'&& <p className='text-red-700'>Password must be 6-10 charecters.</p>
-  }
-       
-          <button className="btn btn-primary mt-4">Register</button>
-        </fieldset>
-        <p>Already Have an Account? <NavLink to={'/login'} ><span className='text-green-500 font-bold hover:underline'>Login</span></NavLink></p>
-            </form>
-            {/* <SocialLogin></SocialLogin> */}
       </div>
+
+      <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+        Create Account
+      </h1>
+
+      <p className="text-gray-500 mt-2 mb-8">
+        Register your account to continue
+      </p>
+
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-5"
+      >
+
+        {/* Name */}
+        <div>
+
+          <label className="font-medium block mb-2">
+            Full Name
+          </label>
+
+          <input
+            type="text"
+            placeholder="Enter your full name"
+            {...register('name', {
+              required: true
+            })}
+            className="w-full h-14 px-4 border rounded-xl bg-gray-50 focus:outline-none focus:border-[#CAEB66]"
+          />
+
+          {errors.name && (
+            <p className="text-red-500 text-sm mt-1">
+              Name is required
+            </p>
+          )}
+
+        </div>
+
+        {/* Photo */}
+        <div>
+
+          <label className="font-medium block mb-2">
+            Profile Photo
+          </label>
+
+          <input
+            type="file"
+            onChange={handleImageUpload}
+            className="file-input file-input-bordered w-full"
+          />
+
+          {uploading && (
+            <p className="text-blue-500 text-sm mt-2">
+              Uploading image...
+            </p>
+          )}
+
+        </div>
+
+        {/* Mobile */}
+        <div>
+
+          <label className="font-medium block mb-2">
+            Mobile Number
+          </label>
+
+          <input
+            type="text"
+            maxLength={10}
+            placeholder="Enter mobile number"
+            {...register('number', {
+              required: true
+            })}
+            className="w-full h-14 px-4 border rounded-xl bg-gray-50 focus:outline-none focus:border-[#CAEB66]"
+          />
+
+          {errors.number && (
+            <p className="text-red-500 text-sm mt-1">
+              Mobile number is required
+            </p>
+          )}
+
+        </div>
+
+        {/* Email */}
+        <div>
+
+          <label className="font-medium block mb-2">
+            Email
+          </label>
+
+          <input
+            type="email"
+            placeholder="Enter your email"
+            {...register('email', {
+              required: true
+            })}
+            className="w-full h-14 px-4 border rounded-xl bg-gray-50 focus:outline-none focus:border-[#CAEB66]"
+          />
+
+          {errors.email && (
+            <p className="text-red-500 text-sm mt-1">
+              Email is required
+            </p>
+          )}
+
+        </div>
+
+        {/* Password */}
+        <div>
+
+          <label className="font-medium block mb-2">
+            Password
+          </label>
+
+          <input
+            type="password"
+            placeholder="Create password"
+            {...register('password', {
+              required: true,
+              minLength: 8,
+              pattern:
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/
+            })}
+            className="w-full h-14 px-4 border rounded-xl bg-gray-50 focus:outline-none focus:border-[#CAEB66]"
+          />
+
+          {errors.password?.type === 'required' && (
+            <p className="text-red-500 text-sm mt-1">
+              Password is required
+            </p>
+          )}
+
+          {errors.password?.type === 'pattern' && (
+            <p className="text-red-500 text-sm mt-1">
+              Must contain uppercase, lowercase,
+              number and special character
+            </p>
+          )}
+
+        </div>
+
+        {/* Button */}
+        <button
+          type="submit"
+          className="w-full h-14 bg-[#CAEB66] text-black font-bold rounded-xl hover:brightness-95 transition"
+        >
+          Create Account
+        </button>
+
+        <p className="text-center text-gray-600">
+          Already have an account?{' '}
+          <NavLink
+            to="/login"
+            className="text-blue-600 font-semibold hover:underline"
+          >
+            Login
+          </NavLink>
+        </p>
+
+        <div className="relative my-6">
+        
+
+          
+        </div>
+
+        <SocialLogin />
+
+      </form>
+
     </div>
-  </div>
-</div>
-    );
+  );
 };
 
 export default Register;
-
